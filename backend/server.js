@@ -33,6 +33,21 @@ app.get("/", (req, res) => {
   res.send("It's working...");
 });
 
+app.get("/api/transactions/:user_id", async (req, res) => {
+  try {
+    const { user_id } = req.params;
+
+    const transactions = await sql`
+        SELECT * FROM transactions WHERE user_id = ${user_id} ORDER BY created_at DESC
+        `;
+
+    res.status(200).json(transactions);
+  } catch (error) {
+    console.log("Error getting the transactions", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 app.post("/api/transactions", async (req, res) => {
   try {
     const { title, amount, category, user_id } = req.body;
